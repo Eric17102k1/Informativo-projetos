@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Timeline de projetos – 2º semestre 2026</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,650;12..96,750&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{
+  --bg:#EBEFF2; --surface:#FFFFFF; --surface-2:#F5F7F9; --ink:#131A28; --muted:#566173;
+  --line:#D7DEE5; --line-strong:#BFC8D3;
+  --accent:#17595F; --accent-ink:#FFFFFF; --accent-soft:#D9EAEB;
+  --and:#2C62CC; --and-soft:#E1EAFB;
+  --ini:#9C620F; --ini-soft:#F6EAD3;
+  --fin:#27804F; --fin-soft:#DBF0E3;
+  --sb:#677084; --sb-soft:#E6E9EE;
+  --late:#BC3726; --late-soft:#F8DFDA;
+  --shadow:0 1px 0 rgba(19,26,40,.04), 0 8px 24px -12px rgba(19,26,40,.18);
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"Figtree", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --on-color:#FFFFFF;
+  color-scheme: light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1218; --surface:#161B23; --surface-2:#1C222C; --ink:#E5EAF1; --muted:#9AA5B5;
+    --line:#29303B; --line-strong:#3A4350;
+    --accent:#62B5B3; --accent-ink:#0E1218; --accent-soft:#1B3233;
+    --and:#7DA6F3; --and-soft:#1C2A44;
+    --ini:#E2AA4E; --ini-soft:#382C16;
+    --fin:#5FC58C; --fin-soft:#16321F;
+    --sb:#A5AEBC; --sb-soft:#252B35;
+    --late:#F27E6D; --late-soft:#3E1F1B;
+    --shadow:0 1px 0 rgba(0,0,0,.3), 0 10px 28px -14px rgba(0,0,0,.7);
+    --on-color:#0E1218;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1218; --surface:#161B23; --surface-2:#1C222C; --ink:#E5EAF1; --muted:#9AA5B5;
+  --line:#29303B; --line-strong:#3A4350;
+  --accent:#62B5B3; --accent-ink:#0E1218; --accent-soft:#1B3233;
+  --and:#7DA6F3; --and-soft:#1C2A44;
+  --ini:#E2AA4E; --ini-soft:#382C16;
+  --fin:#5FC58C; --fin-soft:#16321F;
+  --sb:#A5AEBC; --sb-soft:#252B35;
+  --late:#F27E6D; --late-soft:#3E1F1B;
+  --shadow:0 1px 0 rgba(0,0,0,.3), 0 10px 28px -14px rgba(0,0,0,.7);
+  --on-color:#0E1218;
+  color-scheme: dark;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;transition:background-color .2s}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1480px;margin:0 auto;padding:28px clamp(16px,3vw,40px) 64px}
+.num{font-variant-numeric:tabular-nums}
+
+/* Header */
+.top{display:flex;flex-wrap:wrap;gap:16px 24px;align-items:flex-start;justify-content:space-between}
+.top h1{font-family:var(--display);font-weight:750;font-size:clamp(28px,3.4vw,40px);letter-spacing:-.02em;line-height:1.1;margin:0}
+.top p{margin:6px 0 0;color:var(--muted);font-size:16px}
+.actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:8px;height:42px;padding:0 16px;border-radius:10px;border:1px solid var(--line-strong);background:var(--surface);cursor:pointer;font-weight:600;font-size:15px;white-space:nowrap}
+.btn:hover{border-color:var(--ink)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.icon{width:42px;padding:0;justify-content:center}
+.btn svg{width:18px;height:18px;flex:none}
+.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* Overview */
+.overview{margin-top:28px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:24px clamp(18px,2.4vw,32px);box-shadow:var(--shadow)}
+.ov-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 24px}
+.ov-big{font-family:var(--display);font-size:clamp(22px,2.6vw,30px);font-weight:650;letter-spacing:-.015em;margin:0}
+.ov-big b{font-weight:750}
+.ov-side{font-size:16px;color:var(--muted)}
+.ov-side strong{color:var(--late);font-weight:700}
+.stack{display:flex;height:22px;border-radius:7px;overflow:hidden;margin:18px 0 14px;background:var(--surface-2);gap:3px}
+.stack span{display:block;height:100%;transition:flex-grow .35s ease;min-width:0}
+.legend{display:flex;flex-wrap:wrap;gap:8px 22px;margin:0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:8px;font-size:15px;color:var(--muted)}
+.legend b{color:var(--ink);font-weight:700}
+.dot{width:11px;height:11px;border-radius:3px;flex:none}
+.c-and{background:var(--and)}.c-ini{background:var(--ini)}.c-fin{background:var(--fin)}.c-sb{background:var(--sb)}.c-late{background:var(--late)}
+
+/* Section headings */
+.sec-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;margin:44px 0 16px}
+.sec-head h2{font-family:var(--display);font-weight:700;font-size:26px;letter-spacing:-.015em;margin:0;line-height:1.15}
+.sec-head p{margin:4px 0 0;color:var(--muted);font-size:15px}
+
+/* Filters */
+.filters{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+.search{position:relative;flex:1 1 260px;max-width:380px}
+.search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--muted)}
+.search input{width:100%;height:44px;border-radius:10px;border:1px solid var(--line-strong);background:var(--surface);padding:0 14px 0 40px;font-size:16px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{height:40px;padding:0 14px;border-radius:999px;border:1px solid var(--line-strong);background:var(--surface);cursor:pointer;font-size:15px;font-weight:600;display:inline-flex;align-items:center;gap:8px;color:var(--muted)}
+.chip[aria-pressed="true"]{color:var(--ink);border-color:currentColor;background:var(--surface-2)}
+.chip[aria-pressed="true"].and{color:var(--and);background:var(--and-soft)}
+.chip[aria-pressed="true"].ini{color:var(--ini);background:var(--ini-soft)}
+.chip[aria-pressed="true"].fin{color:var(--fin);background:var(--fin-soft)}
+.chip[aria-pressed="true"].sb{color:var(--sb);background:var(--sb-soft)}
+.chip .n{font-variant-numeric:tabular-nums;opacity:.8}
+.sel{height:44px;border-radius:10px;border:1px solid var(--line-strong);background:var(--surface);padding:0 12px;font-size:15px;font-weight:500;max-width:220px}
+.linkbtn{background:none;border:0;color:var(--accent);font-weight:600;cursor:pointer;padding:8px 6px;font-size:15px;text-decoration:underline;text-underline-offset:3px}
+
+/* Table */
+.sheet{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+.sheet-scroll{overflow:auto;max-height:72vh}
+table{border-collapse:separate;border-spacing:0;width:100%;min-width:1500px;font-size:15px}
+thead th{position:sticky;top:0;z-index:2;background:var(--surface-2);text-align:left;font-weight:650;font-size:15px;color:var(--muted);padding:0;border-bottom:1px solid var(--line-strong);white-space:nowrap}
+thead th button{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:6px;width:100%;padding:13px 12px;cursor:pointer}
+thead th button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+thead th .arrow{opacity:0;font-size:13px}
+thead th[aria-sort] .arrow{opacity:1;color:var(--ink)}
+thead th[aria-sort] button{color:var(--ink)}
+tbody td{border-bottom:1px solid var(--line);padding:4px 6px;vertical-align:middle}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:var(--surface-2)}
+tbody tr.flash td{animation:flash 1.6s ease}
+@keyframes flash{0%,40%{background:var(--accent-soft)}100%{background:transparent}}
+.cell{width:100%;border:1px solid transparent;background:transparent;border-radius:8px;padding:9px 8px;font-size:15px;min-height:40px}
+.cell:hover{border-color:var(--line)}
+.cell:focus{border-color:var(--accent);background:var(--surface);outline:none;box-shadow:0 0 0 3px var(--accent-soft)}
+.cell.proj{width:380px;min-width:380px;font-weight:600;resize:none;overflow:hidden;line-height:1.4;display:block;field-sizing:content}
+.cell.date{width:150px}
+select.cell{cursor:pointer;appearance:none;-webkit-appearance:none;padding-right:26px;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 14px) 50%,calc(100% - 9px) 50%;background-size:5px 5px;background-repeat:no-repeat}
+select.status{font-weight:650;border-radius:999px;width:auto;min-width:148px}
+select.status.and{color:var(--and);background-color:var(--and-soft)}
+select.status.ini{color:var(--ini);background-color:var(--ini-soft)}
+select.status.fin{color:var(--fin);background-color:var(--fin-soft)}
+select.status.sb{color:var(--sb);background-color:var(--sb-soft)}
+select.status option{color:var(--ink);background:var(--surface)}
+.sla{display:flex;flex-direction:column;gap:2px;padding:0 6px;min-width:178px}
+.badge{display:inline-flex;align-items:center;gap:7px;font-weight:650;font-size:15px;white-space:nowrap}
+.badge::before{content:"";width:9px;height:9px;border-radius:50%;background:currentColor;flex:none}
+.badge.ok{color:var(--fin)}.badge.late{color:var(--late)}.badge.open{color:var(--and)}.badge.lateopen{color:var(--late)}.badge.none{color:var(--muted)}
+.sla small{color:var(--muted);font-size:14px;padding-left:16px}
+.star{width:38px;height:38px;border:0;background:transparent;border-radius:8px;cursor:pointer;color:var(--line-strong);display:grid;place-items:center}
+.star:hover{color:var(--muted)}
+.star[aria-pressed="true"]{color:var(--ini)}
+.star svg{width:20px;height:20px}
+.del{width:38px;height:38px;border:0;background:transparent;border-radius:8px;cursor:pointer;color:var(--muted);display:grid;place-items:center;opacity:.55}
+tr:hover .del,.del:focus-visible{opacity:1}
+.del:hover{color:var(--late);background:var(--late-soft)}
+.del svg{width:18px;height:18px}
+.empty{padding:48px 24px;text-align:center;color:var(--muted);font-size:16px}
+.sheet-foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;padding:12px 16px;border-top:1px solid var(--line);color:var(--muted);font-size:15px;background:var(--surface-2)}
+
+/* Dashboard */
+.dash{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px 24px;box-shadow:var(--shadow);min-width:0}
+.panel h3{font-family:var(--display);font-weight:650;font-size:20px;margin:0 0 4px;letter-spacing:-.01em}
+.panel .sub{color:var(--muted);font-size:15px;margin:0 0 18px}
+.span-12{grid-column:span 12}.span-7{grid-column:span 7}.span-5{grid-column:span 5}.span-8{grid-column:span 8}.span-4{grid-column:span 4}.span-6{grid-column:span 6}
+@media (max-width:1000px){.span-7,.span-5,.span-8,.span-4,.span-6{grid-column:span 12}}
+
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);padding:0;overflow:hidden}
+.kpi{padding:22px 24px;border-left:1px solid var(--line);position:relative}
+.kpi:first-child{border-left:0}
+.kpi .k-label{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:600;color:var(--muted)}
+.kpi .k-val{font-family:var(--display);font-size:46px;font-weight:750;letter-spacing:-.03em;line-height:1.05;margin-top:8px}
+.kpi .k-note{font-size:15px;color:var(--muted);margin-top:4px}
+.kpi::after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px}
+.kpi.and::after{background:var(--and)}.kpi.ini::after{background:var(--ini)}.kpi.fin::after{background:var(--fin)}.kpi.sb::after{background:var(--sb)}.kpi.total::after{background:var(--ink)}
+@media (max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.kpi{border-left:0;border-top:1px solid var(--line)}.kpi.total{grid-column:span 2;border-top:0}}
+
+.sla-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media (max-width:560px){.sla-grid{grid-template-columns:1fr}}
+.sla-block h4{margin:0 0 4px;font-size:16px;font-weight:650}
+.sla-block .pct{font-family:var(--display);font-size:40px;font-weight:750;letter-spacing:-.02em;line-height:1.1}
+.sla-block .pct-note{color:var(--muted);font-size:15px;margin-bottom:12px}
+.split{display:flex;height:12px;border-radius:6px;overflow:hidden;background:var(--surface-2);gap:2px;margin-bottom:12px}
+.split span{transition:flex-grow .35s ease}
+.rows{list-style:none;margin:0;padding:0}
+.rows li{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:8px 0;border-top:1px solid var(--line);font-size:15px}
+.rows li:first-child{border-top:0}
+.rows .lab{display:flex;align-items:center;gap:8px}
+.rows b{font-variant-numeric:tabular-nums}
+
+.fiscal-list{display:flex;flex-direction:column;gap:14px}
+.f-row{display:grid;grid-template-columns:140px 1fr 110px;gap:14px;align-items:center}
+@media (max-width:560px){.f-row{grid-template-columns:1fr;gap:6px}}
+.f-name{font-weight:650;font-size:16px}
+.f-name small{display:block;color:var(--muted);font-weight:500;font-size:14px}
+.f-bar{display:flex;height:26px;border-radius:7px;overflow:hidden;background:var(--surface-2);gap:2px}
+.f-bar span{display:grid;place-items:center;font-size:14px;font-weight:700;color:var(--on-color);min-width:0;overflow:hidden;transition:flex-grow .35s ease}
+.f-late{font-size:15px;text-align:right;color:var(--muted)}
+.f-late strong{color:var(--late)}
+.mini-legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:16px;font-size:14px;color:var(--muted)}
+.mini-legend span{display:flex;align-items:center;gap:6px}
+
+.weeks{display:flex;align-items:flex-end;gap:10px;height:230px;padding-top:24px;overflow-x:auto}
+.week{flex:1 0 56px;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%}
+.w-col{flex:1;width:100%;max-width:64px;display:flex;flex-direction:column;justify-content:flex-end;position:relative}
+.w-col span{display:block;width:100%;transition:height .35s ease}
+.w-col span:first-child{border-radius:6px 6px 0 0}
+.w-total{position:absolute;left:0;right:0;text-align:center;font-weight:700;font-size:15px;font-variant-numeric:tabular-nums}
+.w-label{font-size:14px;color:var(--muted);white-space:nowrap;text-align:center;line-height:1.3}
+.week.now .w-label{color:var(--ink);font-weight:700}
+.week.now .w-col{outline:2px dashed var(--line-strong);outline-offset:4px;border-radius:6px}
+
+.regimes{display:flex;flex-direction:column;gap:12px}
+.r-row .r-top{display:flex;justify-content:space-between;font-size:15px;margin-bottom:6px}
+.r-row .r-top b{font-variant-numeric:tabular-nums}
+.r-track{height:10px;border-radius:5px;background:var(--surface-2);overflow:hidden}
+.r-track span{display:block;height:100%;background:var(--accent);border-radius:5px;transition:width .35s ease}
+
+.watch{list-style:none;margin:0;padding:0;max-height:340px;overflow:auto}
+.watch li{display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding:11px 0;border-top:1px solid var(--line)}
+.watch li:first-child{border-top:0}
+.watch .w-name{font-weight:600;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.watch .w-meta{color:var(--muted);font-size:14px;grid-column:1}
+.watch .w-days{grid-row:span 2;align-self:center;font-weight:700;font-size:15px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.watch .w-days.late{color:var(--late)}.watch .w-days.soon{color:var(--ini)}
+.watch-empty{color:var(--muted);font-size:15px;padding:12px 0}
+
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:10px;font-weight:600;font-size:15px;opacity:0;pointer-events:none;transition:.25s;z-index:20}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+footer{margin-top:40px;color:var(--muted);font-size:14px}
+
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div>
+      <h1>Timeline de projetos</h1>
+      <p>2º semestre de 2026, aba Projetos. Hoje é <span id="today"></span>.</p>
+    </div>
+    <div class="actions">
+      <button class="btn primary" id="addBtn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        Adicionar projeto
+      </button>
+      <label class="btn" for="importInput" tabindex="0" id="importLabel">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M20 15v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-4"/></svg>
+        Importar planilha
+      </label>
+      <input type="file" id="importInput" accept=".xlsx,.xls" class="visually-hidden">
+      <button class="btn" id="exportBtn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M20 15v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-4"/></svg>
+        Baixar .xlsx
+      </button>
+      <button class="btn icon" id="themeBtn" type="button" aria-label="Alternar tema claro e escuro" title="Alternar tema"></button>
+    </div>
+  </header>
+
+  <section class="overview" aria-labelledby="ovTitle">
+    <div class="ov-head">
+      <p class="ov-big" id="ovTitle"></p>
+      <p class="ov-side" id="ovSide"></p>
+    </div>
+    <div class="stack" id="ovStack" aria-hidden="true"></div>
+    <ul class="legend" id="ovLegend"></ul>
+  </section>
+
+  <div class="sec-head">
+    <div>
+      <h2>Planilha</h2>
+      <p>Clique em qualquer célula para editar. O status de SLA é calculado sozinho, igual à fórmula da planilha.</p>
+    </div>
+  </div>
+
+  <div class="filters">
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input type="search" id="q" placeholder="Buscar projeto, código ou observação" aria-label="Buscar">
+    </div>
+    <div class="chips" id="statusChips" role="group" aria-label="Filtrar por status"></div>
+    <select class="sel" id="fFiscal" aria-label="Filtrar por fiscal"></select>
+    <select class="sel" id="fRegime" aria-label="Filtrar por regime"></select>
+    <select class="sel" id="fSla" aria-label="Filtrar por SLA"></select>
+    <button class="chip" id="fMarked" type="button" aria-pressed="false">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9z"/></svg>
+      Marcados
+    </button>
+    <button class="linkbtn" id="clearBtn" type="button" hidden>Limpar filtros</button>
+  </div>
+
+  <div class="sheet">
+    <div class="sheet-scroll">
+      <table>
+        <thead><tr id="headRow"></tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+      <div class="empty" id="empty" hidden>Nenhum projeto com esses filtros. Ajuste a busca ou limpe os filtros.</div>
+    </div>
+    <div class="sheet-foot">
+      <span id="countInfo"></span>
+      <span>Alterações ficam salvas neste navegador. <button class="linkbtn" id="resetBtn" type="button">Restaurar dados originais</button></span>
+    </div>
+  </div>
+
+  <div class="sec-head">
+    <div>
+      <h2>Painel</h2>
+      <p id="dashScope"></p>
+    </div>
+  </div>
+
+  <div class="dash">
+    <div class="panel kpis span-12" id="kpis"></div>
+
+    <div class="panel span-5">
+      <h3>Prazos e SLA</h3>
+      <p class="sub">Entrega interna comparada à finalização.</p>
+      <div class="sla-grid" id="slaGrid"></div>
+    </div>
+
+    <div class="panel span-7">
+      <h3>Por fiscal</h3>
+      <p class="sub">Distribuição dos projetos e atrasos em aberto por responsável.</p>
+      <div class="fiscal-list" id="fiscalList"></div>
+      <div class="mini-legend">
+        <span><i class="dot c-and"></i>Em andamento</span><span><i class="dot c-ini"></i>A iniciar</span><span><i class="dot c-fin"></i>Finalizado</span><span><i class="dot c-sb"></i>Stand by</span>
+      </div>
+    </div>
+
+    <div class="panel span-8">
+      <h3>Entregas internas por semana</h3>
+      <p class="sub">Quantos projetos vencem em cada semana. A semana atual está tracejada.</p>
+      <div class="weeks" id="weeks"></div>
+      <div class="mini-legend"><span><i class="dot c-fin"></i>Finalizados</span><span><i class="dot c-and"></i>Em aberto</span><span><i class="dot c-late"></i>Atrasados em aberto</span></div>
+    </div>
+
+    <div class="panel span-4">
+      <h3>Por regime tributário</h3>
+      <p class="sub">Volume de projetos em cada regime.</p>
+      <div class="regimes" id="regimes"></div>
+    </div>
+
+    <div class="panel span-6">
+      <h3>Atrasados em aberto</h3>
+      <p class="sub">Do maior para o menor atraso.</p>
+      <ul class="watch" id="lateList"></ul>
+    </div>
+
+    <div class="panel span-6">
+      <h3>Vencem nos próximos 7 dias</h3>
+      <p class="sub">Projetos ainda abertos com entrega interna chegando.</p>
+      <ul class="watch" id="soonList"></ul>
+    </div>
+  </div>
+
+  <footer>Dados importados de “Análise – Timeline – 2º semestre 2026 (novembro)”.</footer>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const ORIGINAL = [{"id": 1, "mark": false, "projeto": "LR - 083.091 - WORK SHORE INDUSTRIA E COMERCIO LTDA", "regime": "Lucro Real", "fiscal": "Ane", "status": "EM ANDAMENTO", "entrega": "2026-11-01", "final": "", "obs": ""}, {"id": 2, "mark": true, "projeto": "LP - 011.007 - AGRO-MILLORA PRODUCAO E COMERCIO DE MUDAS VEGETAIS LTDA", "regime": "Lucro Presumido", "fiscal": "Julio", "status": "EM ANDAMENTO", "entrega": "2026-11-02", "final": "", "obs": ""}, {"id": 3, "mark": false, "projeto": "LR - 001.468 - MENZOIL INDUSTRIA DE LUBRIFICANTES S/A", "regime": "Lucro Real", "fiscal": "Eric", "status": "A INICIAR", "entrega": "2026-11-02", "final": "", "obs": ""}, {"id": 4, "mark": false, "projeto": "LR - 069.062 - PRSZYSIEZNY INDUSTRIA E COMERCIO DE RACOES LTDA", "regime": "Lucro Real", "fiscal": "Ana Caroline", "status": "FINALIZADO", "entrega": "2026-11-02", "final": "2026-11-06", "obs": ""}, {"id": 5, "mark": false, "projeto": "LR - 001.039 - PRIMU'S MADEIRAS LTDA", "regime": "Lucro Real", "fiscal": "Ana Caroline", "status": "FINALIZADO", "entrega": "2026-11-04", "final": "2026-11-09", "obs": ""}, {"id": 6, "mark": false, "projeto": "114.020 - ELETROFASE COMERCIO DE COMPONENTES ELETRICOS LTDA", "regime": "Lucro Real", "fiscal": "Julio", "status": "FINALIZADO", "entrega": "2026-11-06", "final": "2026-11-06", "obs": ""}, {"id": 7, "mark": false, "projeto": "LR - 001.478 - EXITO DISTRIBUIDORA DE ALIMENTOS LTDA", "regime": "Lucro Real", "fiscal": "Ana Caroline", "status": "FINALIZADO", "entrega": "2026-11-07", "final": "2026-11-12", "obs": ""}, {"id": 8, "mark": false, "projeto": "LR - 037.011 - POSTO DE COMBUSTIVEIS ECOPETRO LTDA", "regime": "Lucro Real", "fiscal": "Ana Caroline", "status": "EM ANDAMENTO", "entrega": "2026-11-07", "final": "", "obs": ""}, {"id": 9, "mark": false, "projeto": "LR - 083.093 - MIX DISTRIBUIDORA LTDA", "regime": "Lucro Real", "fiscal": "Julio", "status": "FINALIZADO", "entrega": "2026-11-07", "final": "2026-11-09", "obs": ""}, {"id": 10, "mark": false, "projeto": "114.040 - MARCIAL MAQUINAS LTDA", "regime": "Lucro Real e Simples", "fiscal": "Julio", "status": "FINALIZADO", "entrega": "2026-11-09", "final": "2026-11-11", "obs": ""}, {"id": 11, "mark": false, "projeto": "114.027 - MINIMERCADO HFJ LTDA", "regime": "Lucro Real e Simples", "fiscal": "Ana Caroline", "status": "EM ANDAMENTO", "entrega": "2026-11-09", "final": "", "obs": ""}, {"id": 12, "mark": false, "projeto": "114.041 - CAJUSUL EMPORIO LTDA", "regime": "Lucro Real e Simples", "fiscal": "Ane", "status": "FINALIZADO", "entrega": "2026-11-09", "final": "2026-11-12", "obs": ""}, {"id": 13, "mark": true, "projeto": "LP e SN - 001.474 - JEANN BULERIANM", "regime": "Lucro Presumido e Simples", "fiscal": "Breno", "status": "EM ANDAMENTO", "entrega": "2026-11-09", "final": "", "obs": ""}, {"id": 14, "mark": false, "projeto": "LR - 001.321 - F H COMASSETTO MATERIAIS DE CONSTRUCAO LTDA", "regime": "Lucro Real", "fiscal": "Eric", "status": "A INICIAR", "entrega": "2026-11-09", "final": "", "obs": ""}, {"id": 15, "mark": false, "projeto": "LR - 001.428 - VBBR CONVENIENCIA S. A.", "regime": "Lucro Real", "fiscal": "Eric", "status": "FINALIZADO", "entrega": "2026-11-09", "final": "2026-11-06", "obs": ""}, {"id": 16, "mark": false, "projeto": "LR - 001.355 - DHDX DISTRIBUIDORA LTDA", "regime": "Lucro Real", "fiscal": "Eric", "status": "A INICIAR", "entrega": "2026-11-10", "final": "", "obs": ""}, {"id": 17, "mark": false, "projeto": "LP - 037.016 - SOUZA & VITAL LTDA", "regime": "Lucro Presumido", "fiscal": "Breno", "status": "A INICIAR", "entrega": "2026-11-14", "final": "", "obs": ""}, {"id": 18, "mark": false, "projeto": "LR - 037.013 - PALMAS COMERCIO DE COMBUSTIVEIS LTDA", "regime": "Lucro Real", "fiscal": "Julio", "status": "EM ANDAMENTO", "entrega": "2026-11-14", "final": "", "obs": ""}, {"id": 19, "mark": false, "projeto": "LR - 037.014 - POSTO PALMAS COMERCIO LTDA", "regime": "Lucro Real", "fiscal": "Eric", "status": "EM ANDAMENTO", "entrega": "2026-11-14", "final": "", "obs": ""}, {"id": 20, "mark": false, "projeto": "LR - 083.094 - LITOGRAFICA CALIFORNIA CORTE E IMPRESSAO LTDA", "regime": "Lucro Real", "fiscal": "Ane", "status": "A INICIAR", "entrega": "2026-11-14", "final": "", "obs": ""}, {"id": 21, "mark": false, "projeto": "LR - 083.096 - POSTO DUAS COLUNAS LTDA", "regime": "Lucro Real", "fiscal": "Ana Caroline", "status": "A INICIAR", "entrega": "2026-11-14", "final": "", "obs": ""}, {"id": 22, "mark": false, "projeto": "LR - 106.017 - REPLAMA PRESTACAO DE SERVICOS LTDA", "regime": "Lucro Real", "fiscal": "Julio", "status": "A INICIAR", "entrega": "2026-11-14", "final": "", "obs": ""}, {"id": 23, "mark": false, "projeto": "LR - 106.016 - CENTRO DA CONSTRUCAO DISTRIBUIDORA DE MATERIAL DE CONSTRUCAO LTDA", "regime": "Lucro Real", "fiscal": "Ana Caroline", "status": "A INICIAR", "entrega": "2026-11-15", "final": "", "obs": ""}, {"id": 24, "mark": false, "projeto": "LR - 098.007 - MAIFREDO EMBALAGENS LTDA", "regime": "Lucro Real", "fiscal": "", "status": "STAND BY", "entrega": "2026-12-01", "final": "", "obs": ""}, {"id": 25, "mark": false, "projeto": "LR - 106.012 - VIPER SERVICOS DO NORDESTE LTDA", "regime": "Lucro Real", "fiscal": "Ane", "status": "A INICIAR", "entrega": "2026-11-19", "final": "", "obs": ""}, {"id": 26, "mark": false, "projeto": "LR - 106.014 - VIPERFORT SERVICOS DE SEGURANCA LTDA", "regime": "Lucro Real", "fiscal": "Ana Caroline", "status": "A INICIAR", "entrega": "2026-11-19", "final": "", "obs": ""}, {"id": 27, "mark": false, "projeto": "LP - 001.335 - ELC PRODUTOS DE SEGURANCA - INDUSTRIA E COMERCIO LTDA", "regime": "Lucro Presumido", "fiscal": "Eric", "status": "A INICIAR", "entrega": "2026-11-20", "final": "", "obs": ""}, {"id": 28, "mark": false, "projeto": "LP - 070.007 - LUCIMAR LARA DE SERPA", "regime": "Lucro Presumido", "fiscal": "Eric", "status": "A INICIAR", "entrega": "2026-11-20", "final": "", "obs": ""}, {"id": 29, "mark": false, "projeto": "LR - 103.007 - ALFA VET COMERCIO DE PRODUTOS AGROPECUARIOS LTDA", "regime": "Lucro Real", "fiscal": "Julio", "status": "A INICIAR", "entrega": "2026-11-20", "final": "", "obs": ""}, {"id": 30, "mark": false, "projeto": "LR - 083.095 - CASA CARDAO LTDA", "regime": "Lucro Real", "fiscal": "", "status": "A INICIAR", "entrega": "2026-11-22", "final": "", "obs": ""}, {"id": 31, "mark": false, "projeto": "LP - 037.017 - VITAL E VITAL LTDA", "regime": "Lucro Presumido", "fiscal": "Breno", "status": "A INICIAR", "entrega": "2026-11-23", "final": "", "obs": ""}, {"id": 32, "mark": false, "projeto": "LR - 021.002 - DIFRIPAR LOGISTICA E DISTRIBUICAO LTDA", "regime": "Lucro Real", "fiscal": "", "status": "A INICIAR", "entrega": "2026-11-23", "final": "", "obs": ""}, {"id": 33, "mark": false, "projeto": "114.003 - CONSTRUCON MATERIAIS DE CONSTRUÇÃO LTDA", "regime": "Lucro Real", "fiscal": "Ana Caroline", "status": "FINALIZADO", "entrega": "2026-11-27", "final": "2026-11-06", "obs": ""}, {"id": 34, "mark": false, "projeto": "LR - 037.010 - POSTO DE COMBUSTIVEIS 32 LTDA", "regime": "Lucro Real", "fiscal": "Ane", "status": "A INICIAR", "entrega": "2026-11-27", "final": "", "obs": ""}, {"id": 35, "mark": false, "projeto": "LR - 069.038 - SUPERMERCADO LUIZA ROSA LTDA", "regime": "Lucro Real", "fiscal": "Julio", "status": "A INICIAR", "entrega": "2026-11-27", "final": "", "obs": ""}, {"id": 36, "mark": false, "projeto": "LR - 013.026 - DROGARIA JLF E COMERCIO LTDA", "regime": "Lucro Real", "fiscal": "Ane", "status": "A INICIAR", "entrega": "2026-11-28", "final": "", "obs": ""}, {"id": 37, "mark": false, "projeto": "LR - 112.010 - NESTRAL RACOES LTDA", "regime": "Lucro Real", "fiscal": "Ana Caroline", "status": "A INICIAR", "entrega": "2026-11-28", "final": "", "obs": ""}, {"id": 38, "mark": false, "projeto": "114.044 - FERMATEL DISTRIBUIDORA DE MATERIAIS ELETRICOS", "regime": "Lucro Real", "fiscal": "Ane", "status": "A INICIAR", "entrega": "2026-11-29", "final": "", "obs": ""}, {"id": 39, "mark": false, "projeto": "114.009 - INDA METAL METALURGICA LTDA", "regime": "Lucro Real e Simples", "fiscal": "Ane", "status": "A INICIAR", "entrega": "2026-11-29", "final": "", "obs": ""}, {"id": 40, "mark": true, "projeto": "LP - 001.324 - L W COMERCIO ATACADISTA E VAREJISTA DE MOVEIS E ELETRODOMESTICOS LTDA", "regime": "Lucro Presumido", "fiscal": "", "status": "A INICIAR", "entrega": "2026-11-29", "final": "", "obs": ""}, {"id": 41, "mark": false, "projeto": "LR - 001.358 - STONIX ENERGY DF LTDA", "regime": "Lucro Real", "fiscal": "Breno", "status": "FINALIZADO", "entrega": "2026-11-29", "final": "2026-11-05", "obs": ""}, {"id": 42, "mark": false, "projeto": "LR - 001.361 - STONIX ENERGY CE LTDA", "regime": "Lucro Real", "fiscal": "Breno", "status": "FINALIZADO", "entrega": "2026-11-29", "final": "2026-11-05", "obs": ""}, {"id": 43, "mark": false, "projeto": "LR - 001.367 - STONIX ENERGY PB LTDA", "regime": "Lucro Real", "fiscal": "Breno", "status": "FINALIZADO", "entrega": "2026-11-29", "final": "2026-11-05", "obs": ""}, {"id": 44, "mark": false, "projeto": "LR - 001.373 - QUECA COMERCIO DE AUTOPECAS LTDA", "regime": "Lucro Real", "fiscal": "Breno", "status": "FINALIZADO", "entrega": "2026-11-29", "final": "2026-11-05", "obs": ""}, {"id": 45, "mark": false, "projeto": "LR - 001.375 - GAROA COMERCIO DE AUTOPECAS LTDA.", "regime": "Lucro Real", "fiscal": "Breno", "status": "FINALIZADO", "entrega": "2026-11-29", "final": "2026-11-05", "obs": ""}, {"id": 46, "mark": false, "projeto": "LR - 001.380 - SORRISO COMERCIO DE AUTOPECAS LTDA", "regime": "Lucro Real", "fiscal": "Breno", "status": "FINALIZADO", "entrega": "2026-11-29", "final": "2026-11-05", "obs": ""}, {"id": 47, "mark": false, "projeto": "LR - 001.384 - COQUEIRO COMERCIO DE AUTOPECAS LTDA.", "regime": "Lucro Real", "fiscal": "Breno", "status": "FINALIZADO", "entrega": "2026-11-29", "final": "2026-11-05", "obs": ""}, {"id": 48, "mark": false, "projeto": "LR - 001.386 - FEDERAL COMERCIO DE AUTOPECAS LTDA", "regime": "Lucro Real", "fiscal": "Breno", "status": "FINALIZADO", "entrega": "2026-11-29", "final": "2026-11-05", "obs": ""}, {"id": 49, "mark": false, "projeto": "LR - 001.388 - ZAMBE COMERCIO DE AUTOPECAS LTDA", "regime": "Lucro Real", "fiscal": "Breno", "status": "FINALIZADO", "entrega": "2026-11-29", "final": "2026-11-05", "obs": ""}, {"id": 50, "mark": false, "projeto": "LR - 001.389 - CAJU COMERCIO DE AUTOPECAS LTDA", "regime": "Lucro Real", "fiscal": "Breno", "status": "FINALIZADO", "entrega": "2026-11-29", "final": "2026-11-05", "obs": ""}];
+const STORE_KEY = 'timeline-projetos-2s2026-v1';
+const THEME_KEY = 'timeline-projetos-tema';
+
+const STATUS = [
+  {v:'EM ANDAMENTO', label:'Em andamento', cls:'and'},
+  {v:'A INICIAR', label:'A iniciar', cls:'ini'},
+  {v:'FINALIZADO', label:'Finalizado', cls:'fin'},
+  {v:'STAND BY', label:'Stand by', cls:'sb'}
+];
+const STATUS_BY = Object.fromEntries(STATUS.map(s => [s.v, s]));
+const SLA = {
+  'NO PRAZO': {label:'No prazo', cls:'ok'},
+  'ATRASADO': {label:'Atrasado', cls:'late'},
+  'ATRASADO (EM ABERTO)': {label:'Atrasado (em aberto)', cls:'lateopen'},
+  'DENTRO DO PRAZO': {label:'Dentro do prazo', cls:'open'},
+  'SEM PRAZO': {label:'Sem entrega definida', cls:'none'}
+};
+const COLS = [
+  {key:'mark', label:'', title:'Marcado'},
+  {key:'projeto', label:'Projeto'},
+  {key:'status', label:'Status'},
+  {key:'fiscal', label:'Fiscal'},
+  {key:'entrega', label:'Entrega interna'},
+  {key:'final', label:'Finalização'},
+  {key:'sla', label:'Status SLA'},
+  {key:'regime', label:'Regime tributário'},
+  {key:'obs', label:'Observação'},
+  {key:'_del', label:'', title:'Excluir'}
+];
+
+/* ---------- storage ---------- */
+function clone(x){ return JSON.parse(JSON.stringify(x)); }
+function load(){
+  try { const s = localStorage.getItem(STORE_KEY); if (s) { const d = JSON.parse(s); if (Array.isArray(d)) return d; } } catch(e){}
+  return clone(ORIGINAL);
+}
+let saveTimer;
+function save(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => { try { localStorage.setItem(STORE_KEY, JSON.stringify(rows)); } catch(e){} }, 250);
+}
+let rows = load();
+let nextId = rows.reduce((m,r) => Math.max(m, r.id||0), 0) + 1;
+
+/* ---------- dates ---------- */
+const TODAY = (() => { const d = new Date(); d.setHours(0,0,0,0); return d; })();
+function parseD(s){ if(!s) return null; const [y,m,d] = s.split('-').map(Number); if(!y) return null; return new Date(y, m-1, d); }
+function iso(d){ return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+function daysBetween(a, b){ return Math.round((b - a) / 86400000); }
+const fmtLong = new Intl.DateTimeFormat('pt-BR', {weekday:'long', day:'numeric', month:'long'});
+const fmtShort = new Intl.DateTimeFormat('pt-BR', {day:'numeric', month:'short'});
+function shortDate(s){ const d = parseD(s); return d ? fmtShort.format(d).replace('.', '') : '—'; }
+
+/* ---------- logic (mirrors spreadsheet formula) ---------- */
+function slaOf(r){
+  const e = parseD(r.entrega);
+  if (r.status === 'FINALIZADO') {
+    if (!e) return 'NO PRAZO';
+    const f = parseD(r.final);
+    return (!f || f <= e) ? 'NO PRAZO' : 'ATRASADO';
+  }
+  if (!e) return 'SEM PRAZO';
+  return TODAY > e ? 'ATRASADO (EM ABERTO)' : 'DENTRO DO PRAZO';
+}
+function relText(r){
+  const e = parseD(r.entrega); if (!e) return '';
+  if (r.status === 'FINALIZADO') {
+    const f = parseD(r.final); if (!f) return 'sem data de finalização';
+    const d = daysBetween(e, f);
+    if (d > 0) return d === 1 ? '1 dia após a entrega' : d + ' dias após a entrega';
+    if (d < 0) return (-d) === 1 ? '1 dia antes' : (-d) + ' dias antes';
+    return 'no dia da entrega';
+  }
+  const d = daysBetween(TODAY, e);
+  if (d < 0) return (-d) === 1 ? 'venceu ontem' : 'venceu há ' + (-d) + ' dias';
+  if (d === 0) return 'vence hoje';
+  if (d === 1) return 'vence amanhã';
+  return 'vence em ' + d + ' dias';
+}
+function shortName(p){ return (p||'').replace(/^.*?\d{3}\.\d{3}\s*-\s*/, '') || p; }
+function fiscalName(f){ return f && f.trim() ? f.trim() : 'Sem fiscal'; }
+function titleCase(s){ return (s||'').toLowerCase().replace(/(^|\s)\S/g, c => c.toUpperCase()); }
+function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* ---------- filters ---------- */
+const state = {q:'', status:new Set(), fiscal:'', regime:'', sla:'', marked:false, sortKey:'entrega', sortDir:1};
+
+function filtered(){
+  const q = state.q.trim().toLowerCase();
+  return rows.filter(r => {
+    if (q && !((r.projeto||'') + ' ' + (r.obs||'') + ' ' + (r.fiscal||'')).toLowerCase().includes(q)) return false;
+    if (state.status.size && !state.status.has(r.status)) return false;
+    if (state.fiscal && fiscalName(r.fiscal) !== state.fiscal) return false;
+    if (state.regime && (r.regime||'—') !== state.regime) return false;
+    if (state.sla && slaOf(r) !== state.sla) return false;
+    if (state.marked && !r.mark) return false;
+    return true;
+  });
+}
+function sorted(list){
+  const k = state.sortKey, dir = state.sortDir;
+  const order = {'EM ANDAMENTO':0,'A INICIAR':1,'STAND BY':2,'FINALIZADO':3};
+  const val = r => {
+    if (k === 'sla') return slaOf(r);
+    if (k === 'status') return order[r.status] ?? 9;
+    if (k === 'mark') return r.mark ? 0 : 1;
+    if (k === 'id') return r.id;
+    if (k === 'entrega' || k === 'final') return r[k] || '9999';
+    return (r[k]||'').toString().toLowerCase();
+  };
+  return list.slice().sort((a,b) => { const x = val(a), y = val(b); return x < y ? -dir : x > y ? dir : (a.id - b.id); });
+}
+
+/* ---------- render: filters ---------- */
+function renderFilterOptions(){
+  const chips = document.getElementById('statusChips');
+  chips.innerHTML = STATUS.map(s => {
+    const n = rows.filter(r => r.status === s.v).length;
+    return `<button type="button" class="chip ${s.cls}" data-status="${s.v}" aria-pressed="${state.status.has(s.v)}">${s.label} <span class="n">${n}</span></button>`;
+  }).join('');
+  const fiscals = [...new Set(rows.map(r => fiscalName(r.fiscal)))].sort((a,b) => a === 'Sem fiscal' ? 1 : b === 'Sem fiscal' ? -1 : a.localeCompare(b));
+  const regimes = [...new Set(rows.map(r => r.regime || '—'))].sort();
+  const fill = (id, all, opts, cur) => {
+    const el = document.getElementById(id);
+    el.innerHTML = `<option value="">${all}</option>` + opts.map(o => `<option value="${esc(o)}" ${o===cur?'selected':''}>${esc(o)}</option>`).join('');
+  };
+  fill('fFiscal', 'Todos os fiscais', fiscals, state.fiscal);
+  fill('fRegime', 'Todos os regimes', regimes, state.regime);
+  const slaEl = document.getElementById('fSla');
+  slaEl.innerHTML = '<option value="">Qualquer SLA</option>' + Object.entries(SLA).filter(([k]) => k !== 'SEM PRAZO' || rows.some(r => slaOf(r) === k)).map(([k,v]) => `<option value="${k}" ${k===state.sla?'selected':''}>${v.label}</option>`).join('');
+  document.getElementById('fMarked').setAttribute('aria-pressed', state.marked);
+  const active = state.q || state.status.size || state.fiscal || state.regime || state.sla || state.marked;
+  document.getElementById('clearBtn').hidden = !active;
+
+  // datalists for editing
+  let dl = document.getElementById('dlFiscal');
+  if (!dl) { dl = document.createElement('datalist'); dl.id = 'dlFiscal'; document.body.appendChild(dl); }
+  dl.innerHTML = fiscals.filter(f => f !== 'Sem fiscal').map(f => `<option value="${esc(f)}">`).join('');
+  let dr = document.getElementById('dlRegime');
+  if (!dr) { dr = document.createElement('datalist'); dr.id = 'dlRegime'; document.body.appendChild(dr); }
+  dr.innerHTML = regimes.filter(x => x !== '—').map(x => `<option value="${esc(x)}">`).join('');
+}
+
+/* ---------- render: table ---------- */
+const ICON_STAR = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9z"/></svg>';
+const ICON_DEL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg>';
+
+function renderHead(){
+  document.getElementById('headRow').innerHTML = COLS.map(c => {
+    if (c.key === '_del') return `<th style="width:46px"><span class="visually-hidden">${c.title}</span></th>`;
+    const sorted = state.sortKey === c.key;
+    const arrow = sorted ? (state.sortDir === 1 ? '↑' : '↓') : '↑';
+    const label = c.key === 'mark' ? '<span aria-hidden="true">★</span><span class="visually-hidden">Marcado</span>' : c.label;
+    return `<th ${sorted ? `aria-sort="${state.sortDir===1?'ascending':'descending'}"` : ''} ${c.key==='mark'?'style="width:50px"':''}><button type="button" data-sort="${c.key}" title="Ordenar">${label}<span class="arrow" aria-hidden="true">${arrow}</span></button></th>`;
+  }).join('');
+}
+function slaCell(r){
+  const s = SLA[slaOf(r)];
+  return `<span class="badge ${s.cls}">${s.label}</span><small>${esc(relText(r))}</small>`;
+}
+function rowHtml(r){
+  const st = STATUS_BY[r.status] || {cls:'sb'};
+  return `<tr data-id="${r.id}">
+    <td><button type="button" class="star" data-act="mark" aria-pressed="${!!r.mark}" aria-label="Marcar projeto" title="Marcado (** na planilha)">${ICON_STAR}</button></td>
+    <td><textarea class="cell proj" data-f="projeto" rows="1" aria-label="Projeto">${esc(r.projeto)}</textarea></td>
+    <td><select class="cell status ${st.cls}" data-f="status" aria-label="Status">${STATUS.map(s => `<option value="${s.v}" ${s.v===r.status?'selected':''}>${s.label}</option>`).join('')}</select></td>
+    <td><input class="cell" data-f="fiscal" list="dlFiscal" value="${esc(r.fiscal)}" placeholder="Definir" aria-label="Fiscal" style="min-width:130px"></td>
+    <td><input type="date" class="cell date num" data-f="entrega" value="${esc(r.entrega)}" aria-label="Entrega interna"></td>
+    <td><input type="date" class="cell date num" data-f="final" value="${esc(r.final)}" aria-label="Finalização"></td>
+    <td><div class="sla">${slaCell(r)}</div></td>
+    <td><input class="cell" data-f="regime" list="dlRegime" value="${esc(r.regime)}" aria-label="Regime tributário" style="min-width:210px"></td>
+    <td><input class="cell" data-f="obs" value="${esc(r.obs)}" placeholder="Adicionar nota" aria-label="Observação" style="min-width:220px"></td>
+    <td><button type="button" class="del" data-act="del" aria-label="Excluir projeto" title="Excluir">${ICON_DEL}</button></td>
+  </tr>`;
+}
+function fitArea(el){ el.style.height = 'auto'; el.style.height = el.scrollHeight + 2 + 'px'; }
+function renderTable(){
+  const list = sorted(filtered());
+  document.getElementById('tbody').innerHTML = list.map(rowHtml).join('');
+  document.querySelectorAll('textarea.proj').forEach(fitArea);
+  document.getElementById('empty').hidden = list.length > 0;
+  document.getElementById('countInfo').textContent = list.length === rows.length
+    ? `${rows.length} projetos`
+    : `Mostrando ${list.length} de ${rows.length} projetos`;
+}
+
+/* ---------- render: overview + dashboard ---------- */
+function count(list, fn){ return list.filter(fn).length; }
+function pct(a, b){ return b ? Math.round(a / b * 100) : 0; }
+
+function renderOverview(){
+  const total = rows.length;
+  const fin = count(rows, r => r.status === 'FINALIZADO');
+  const lateOpen = count(rows, r => slaOf(r) === 'ATRASADO (EM ABERTO)');
+  document.getElementById('ovTitle').innerHTML = `<b class="num">${fin}</b> de <b class="num">${total}</b> projetos finalizados (${pct(fin,total)}%)`;
+  document.getElementById('ovSide').innerHTML = lateOpen
+    ? `<strong class="num">${lateOpen}</strong> ${lateOpen===1?'atrasado':'atrasados'} em aberto`
+    : 'Nenhum atraso em aberto';
+  const order = ['FINALIZADO','EM ANDAMENTO','A INICIAR','STAND BY'];
+  document.getElementById('ovStack').innerHTML = order.map(v => {
+    const n = count(rows, r => r.status === v);
+    return n ? `<span class="c-${STATUS_BY[v].cls}" style="flex-grow:${n}" title="${STATUS_BY[v].label}: ${n}"></span>` : '';
+  }).join('');
+  document.getElementById('ovLegend').innerHTML = order.map(v => {
+    const n = count(rows, r => r.status === v);
+    return `<li><i class="dot c-${STATUS_BY[v].cls}"></i>${STATUS_BY[v].label} <b class="num">${n}</b></li>`;
+  }).join('');
+}
+
+function renderDash(){
+  const list = filtered();
+  const total = list.length;
+  const isFiltered = total !== rows.length;
+  document.getElementById('dashScope').textContent = isFiltered
+    ? `Indicadores dos ${total} projetos filtrados. Atualiza junto com a planilha.`
+    : `Indicadores de todos os ${total} projetos. Atualiza junto com a planilha e os filtros.`;
+
+  // KPIs
+  const n = v => count(list, r => r.status === v);
+  const kpi = (cls, label, val, note) => `<div class="kpi ${cls}"><div class="k-label">${label}</div><div class="k-val num">${val}</div><div class="k-note">${note}</div></div>`;
+  const and = n('EM ANDAMENTO'), ini = n('A INICIAR'), fin = n('FINALIZADO'), sb = n('STAND BY');
+  document.getElementById('kpis').innerHTML =
+    kpi('total', 'Total', total, isFiltered ? 'no filtro atual' : 'projetos na planilha') +
+    kpi('and', 'Em andamento', and, pct(and,total) + '% do total') +
+    kpi('ini', 'A iniciar', ini, pct(ini,total) + '% do total') +
+    kpi('fin', 'Finalizados', fin, pct(fin,total) + '% do total') +
+    kpi('sb', 'Stand by', sb, pct(sb,total) + '% do total');
+
+  // SLA
+  const s = k => count(list, r => slaOf(r) === k);
+  const ok = s('NO PRAZO'), late = s('ATRASADO'), lo = s('ATRASADO (EM ABERTO)'), op = s('DENTRO DO PRAZO');
+  const openTotal = lo + op + s('SEM PRAZO');
+  document.getElementById('slaGrid').innerHTML = `
+    <div class="sla-block">
+      <h4>Finalizados</h4>
+      <div class="pct num">${fin ? pct(ok, ok+late) + '%' : '—'}</div>
+      <div class="pct-note">entregues no prazo</div>
+      <div class="split">${ok?`<span class="c-fin" style="flex-grow:${ok}"></span>`:''}${late?`<span class="c-late" style="flex-grow:${late}"></span>`:''}</div>
+      <ul class="rows">
+        <li><span class="lab"><i class="dot c-fin"></i>No prazo</span><b>${ok}</b></li>
+        <li><span class="lab"><i class="dot c-late"></i>Atrasado</span><b>${late}</b></li>
+      </ul>
+    </div>
+    <div class="sla-block">
+      <h4>Em aberto</h4>
+      <div class="pct num">${openTotal ? pct(op, openTotal) + '%' : '—'}</div>
+      <div class="pct-note">ainda dentro do prazo</div>
+      <div class="split">${op?`<span class="c-and" style="flex-grow:${op}"></span>`:''}${lo?`<span class="c-late" style="flex-grow:${lo}"></span>`:''}</div>
+      <ul class="rows">
+        <li><span class="lab"><i class="dot c-and"></i>Dentro do prazo</span><b>${op}</b></li>
+        <li><span class="lab"><i class="dot c-late"></i>Atrasado (em aberto)</span><b>${lo}</b></li>
+      </ul>
+    </div>`;
+
+  // Fiscal
+  const byF = {};
+  list.forEach(r => { const f = fiscalName(r.fiscal); (byF[f] = byF[f] || []).push(r); });
+  const fNames = Object.keys(byF).sort((a,b) => a === 'Sem fiscal' ? 1 : b === 'Sem fiscal' ? -1 : byF[b].length - byF[a].length);
+  const maxF = Math.max(1, ...fNames.map(f => byF[f].length));
+  document.getElementById('fiscalList').innerHTML = fNames.length ? fNames.map(f => {
+    const rs = byF[f];
+    const segs = ['FINALIZADO','EM ANDAMENTO','A INICIAR','STAND BY'].map(v => {
+      const c = rs.filter(r => r.status === v).length;
+      return c ? `<span class="c-${STATUS_BY[v].cls}" style="flex-grow:${c}" title="${STATUS_BY[v].label}: ${c}">${c}</span>` : '';
+    }).join('');
+    const lateN = rs.filter(r => slaOf(r) === 'ATRASADO (EM ABERTO)').length;
+    return `<div class="f-row">
+      <div class="f-name">${esc(f)}<small>${rs.length} ${rs.length===1?'projeto':'projetos'}</small></div>
+      <div><div class="f-bar" style="width:${Math.max(18, rs.length/maxF*100)}%">${segs}</div></div>
+      <div class="f-late">${lateN ? `<strong>${lateN}</strong> ${lateN===1?'atrasado':'atrasados'}` : 'sem atrasos'}</div>
+    </div>`;
+  }).join('') : '<div class="watch-empty">Sem dados no filtro atual.</div>';
+
+  // Weeks
+  const weekStart = d => { const x = new Date(d); const wd = (x.getDay() + 6) % 7; x.setDate(x.getDate() - wd); return x; };
+  const byW = {};
+  list.forEach(r => { const e = parseD(r.entrega); if (!e) return; const k = iso(weekStart(e)); (byW[k] = byW[k] || []).push(r); });
+  const wKeys = Object.keys(byW).sort();
+  const maxW = Math.max(1, ...wKeys.map(k => byW[k].length));
+  const nowKey = iso(weekStart(TODAY));
+  document.getElementById('weeks').innerHTML = wKeys.length ? wKeys.map(k => {
+    const rs = byW[k];
+    const f = rs.filter(r => r.status === 'FINALIZADO').length;
+    const l = rs.filter(r => slaOf(r) === 'ATRASADO (EM ABERTO)').length;
+    const o = rs.length - f - l;
+    const h = v => (v / maxW * 100) + '%';
+    const start = parseD(k);
+    return `<div class="week ${k===nowKey?'now':''}" title="Semana de ${fmtShort.format(start)}: ${rs.length} projetos">
+      <div class="w-col">
+        <div class="w-total" style="bottom:calc(${h(rs.length)} + 4px)">${rs.length}</div>
+        ${l?`<span class="c-late" style="height:${h(l)}"></span>`:''}
+        ${o?`<span class="c-and" style="height:${h(o)}"></span>`:''}
+        ${f?`<span class="c-fin" style="height:${h(f)}"></span>`:''}
+      </div>
+      <div class="w-label">${k===nowKey?'Esta semana':'Sem. de<br>'+fmtShort.format(start).replace('.','')}</div>
+    </div>`;
+  }).join('') : '<div class="watch-empty">Sem entregas no filtro atual.</div>';
+
+  // Regimes
+  const byR = {};
+  list.forEach(r => { const k = r.regime || '—'; byR[k] = (byR[k]||0) + 1; });
+  const rKeys = Object.keys(byR).sort((a,b) => byR[b] - byR[a]);
+  const maxR = Math.max(1, ...Object.values(byR));
+  document.getElementById('regimes').innerHTML = rKeys.length ? rKeys.map(k => `
+    <div class="r-row"><div class="r-top"><span>${esc(k)}</span><b>${byR[k]}</b></div>
+    <div class="r-track"><span style="width:${byR[k]/maxR*100}%"></span></div></div>`).join('')
+    : '<div class="watch-empty">Sem dados no filtro atual.</div>';
+
+  // Watch lists
+  const lateRows = list.filter(r => slaOf(r) === 'ATRASADO (EM ABERTO)')
+    .map(r => ({r, d: daysBetween(parseD(r.entrega), TODAY)})).sort((a,b) => b.d - a.d);
+  document.getElementById('lateList').innerHTML = lateRows.length ? lateRows.map(({r,d}) => `
+    <li><span class="w-name" title="${esc(r.projeto)}">${esc(shortName(r.projeto))}</span>
+    <span class="w-days late">${d} ${d===1?'dia':'dias'}</span>
+    <span class="w-meta">${esc(fiscalName(r.fiscal))}, ${STATUS_BY[r.status]?.label.toLowerCase() || ''}, entrega em ${shortDate(r.entrega)}</span></li>`).join('')
+    : '<li class="watch-empty">Nenhum projeto atrasado em aberto.</li>';
+
+  const soonRows = list.filter(r => r.status !== 'FINALIZADO' && parseD(r.entrega))
+    .map(r => ({r, d: daysBetween(TODAY, parseD(r.entrega))})).filter(x => x.d >= 0 && x.d <= 7).sort((a,b) => a.d - b.d);
+  document.getElementById('soonList').innerHTML = soonRows.length ? soonRows.map(({r,d}) => `
+    <li><span class="w-name" title="${esc(r.projeto)}">${esc(shortName(r.projeto))}</span>
+    <span class="w-days soon">${d===0?'hoje':d===1?'amanhã':'em '+d+' dias'}</span>
+    <span class="w-meta">${esc(fiscalName(r.fiscal))}, ${STATUS_BY[r.status]?.label.toLowerCase() || ''}, entrega em ${shortDate(r.entrega)}</span></li>`).join('')
+    : '<li class="watch-empty">Nada vence nos próximos 7 dias.</li>';
+}
+
+function renderAll(){ renderFilterOptions(); renderHead(); renderTable(); renderOverview(); renderDash(); }
+let dashTimer;
+function refreshSoft(){ clearTimeout(dashTimer); dashTimer = setTimeout(() => { renderOverview(); renderDash(); }, 150); }
+
+/* ---------- events: table ---------- */
+const tbody = document.getElementById('tbody');
+const byId = id => rows.find(r => r.id === id);
+
+tbody.addEventListener('input', e => {
+  const el = e.target, f = el.dataset.f; if (!f) return;
+  const tr = el.closest('tr'); const r = byId(+tr.dataset.id); if (!r) return;
+  if (el.type === 'date' || el.tagName === 'SELECT') return;
+  if (el.tagName === 'TEXTAREA') fitArea(el);
+  r[f] = el.value; save(); refreshSoft();
+});
+tbody.addEventListener('change', e => {
+  const el = e.target, f = el.dataset.f; if (!f) return;
+  const tr = el.closest('tr'); const r = byId(+tr.dataset.id); if (!r) return;
+  r[f] = f === 'fiscal' ? titleCase(el.value.trim()) : el.value;
+  if (f === 'status') {
+    if (el.value === 'FINALIZADO' && !r.final) { r.final = iso(TODAY); toast('Finalização preenchida com a data de hoje'); }
+    if (el.value !== 'FINALIZADO' && r.final) { r.final = ''; }
+    el.className = 'cell status ' + (STATUS_BY[el.value]?.cls || 'sb');
+    tr.querySelector('[data-f="final"]').value = r.final;
+  }
+  if (f === 'final' && el.value && r.status !== 'FINALIZADO') {
+    r.status = 'FINALIZADO';
+    const sel = tr.querySelector('[data-f="status"]'); sel.value = 'FINALIZADO'; sel.className = 'cell status fin';
+    toast('Status alterado para Finalizado');
+  }
+  if (f === 'fiscal') el.value = r.fiscal;
+  tr.querySelector('.sla').innerHTML = slaCell(r);
+  save(); renderFilterOptions(); renderOverview(); renderDash();
+});
+tbody.addEventListener('click', e => {
+  const b = e.target.closest('[data-act]'); if (!b) return;
+  const tr = b.closest('tr'); const r = byId(+tr.dataset.id); if (!r) return;
+  if (b.dataset.act === 'mark') { r.mark = !r.mark; b.setAttribute('aria-pressed', r.mark); save(); renderFilterOptions(); }
+  if (b.dataset.act === 'del') {
+    if (!confirm(`Excluir “${shortName(r.projeto)}”?`)) return;
+    rows = rows.filter(x => x !== r); save(); renderAll(); toast('Projeto excluído');
+  }
+});
+tbody.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.tagName === 'TEXTAREA') { e.preventDefault(); e.target.blur(); } });
+window.addEventListener('resize', () => document.querySelectorAll('textarea.proj').forEach(fitArea));
+document.getElementById('headRow').addEventListener('click', e => {
+  const b = e.target.closest('[data-sort]'); if (!b) return;
+  const k = b.dataset.sort;
+  if (state.sortKey === k) state.sortDir *= -1; else { state.sortKey = k; state.sortDir = 1; }
+  renderHead(); renderTable();
+});
+
+/* ---------- events: filters ---------- */
+document.getElementById('q').addEventListener('input', e => { state.q = e.target.value; renderFilterOptions(); renderTable(); renderDash(); });
+document.getElementById('statusChips').addEventListener('click', e => {
+  const b = e.target.closest('[data-status]'); if (!b) return;
+  const v = b.dataset.status; state.status.has(v) ? state.status.delete(v) : state.status.add(v);
+  renderFilterOptions(); renderTable(); renderDash();
+});
+[['fFiscal','fiscal'],['fRegime','regime'],['fSla','sla']].forEach(([id,k]) =>
+  document.getElementById(id).addEventListener('change', e => { state[k] = e.target.value; renderFilterOptions(); renderTable(); renderDash(); }));
+document.getElementById('fMarked').addEventListener('click', () => { state.marked = !state.marked; renderFilterOptions(); renderTable(); renderDash(); });
+function clearFilters(){
+  Object.assign(state, {q:'', fiscal:'', regime:'', sla:'', marked:false}); state.status.clear();
+  document.getElementById('q').value = '';
+}
+document.getElementById('clearBtn').addEventListener('click', () => { clearFilters(); renderAll(); });
+
+/* ---------- actions ---------- */
+document.getElementById('addBtn').addEventListener('click', () => {
+  const d = new Date(TODAY); d.setDate(d.getDate() + 7);
+  const r = {id: nextId++, mark:false, projeto:'', regime:'Lucro Real', fiscal:'', status:'A INICIAR', entrega: iso(d), final:'', obs:''};
+  rows.unshift(r); clearFilters(); state.sortKey = 'id'; state.sortDir = -1;
+  save(); renderAll();
+  const tr = tbody.querySelector(`tr[data-id="${r.id}"]`);
+  if (tr) { tr.classList.add('flash'); tr.scrollIntoView({block:'center', behavior:'smooth'}); tr.querySelector('.proj').focus(); tr.querySelector('.proj').placeholder = 'Nome do projeto'; }
+});
+document.getElementById('resetBtn').addEventListener('click', () => {
+  if (!confirm('Voltar aos dados originais da planilha? As edições feitas aqui serão perdidas.')) return;
+  rows = clone(ORIGINAL); nextId = rows.reduce((m,r) => Math.max(m, r.id), 0) + 1;
+  try { localStorage.removeItem(STORE_KEY); } catch(e){}
+  clearFilters(); renderAll(); toast('Dados originais restaurados');
+});
+
+document.getElementById('exportBtn').addEventListener('click', () => {
+  const data = sorted(rows).map(r => ({
+    '': r.mark ? '**' : '', 'PROJETO': r.projeto, 'REGIME TRIBUTARIO': r.regime, 'FISCAL': (r.fiscal||'').toUpperCase(),
+    'STATUS': r.status, 'ENTREGA INTERNA': parseD(r.entrega) || '', 'FINALIZAÇÃO': parseD(r.final) || '',
+    'STATUS SLA': slaOf(r) === 'SEM PRAZO' ? '' : slaOf(r), 'OBSERVAÇÃO': r.obs || ''
+  }));
+  if (window.XLSX) {
+    const ws = XLSX.utils.json_to_sheet(data, {cellDates:true, dateNF:'dd/mm/yyyy'});
+    ws['!cols'] = [{wch:4},{wch:70},{wch:24},{wch:16},{wch:16},{wch:16},{wch:16},{wch:22},{wch:40}];
+    const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'Projetos');
+    XLSX.writeFile(wb, `projetos-${iso(TODAY)}.xlsx`);
+  } else {
+    const head = Object.keys(data[0] || {});
+    const csv = [head.join(';')].concat(data.map(o => head.map(h => {
+      let v = o[h]; if (v instanceof Date) v = v.toLocaleDateString('pt-BR');
+      return '"' + String(v).replace(/"/g, '""') + '"';
+    }).join(';'))).join('\n');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob(['\ufeff' + csv], {type:'text/csv'}));
+    a.download = `projetos-${iso(TODAY)}.csv`; a.click();
+  }
+});
+
+document.getElementById('importLabel').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); document.getElementById('importInput').click(); } });
+document.getElementById('importInput').addEventListener('change', async e => {
+  const file = e.target.files[0]; e.target.value = '';
+  if (!file) return;
+  if (!window.XLSX) { toast('Não foi possível carregar o leitor de planilhas. Verifique a conexão.'); return; }
+  try {
+    const wb = XLSX.read(await file.arrayBuffer(), {cellDates:true});
+    const name = wb.SheetNames.find(n => /projeto/i.test(n)) || wb.SheetNames[0];
+    const grid = XLSX.utils.sheet_to_json(wb.Sheets[name], {header:1, raw:true, defval:''});
+    const hi = grid.findIndex(row => row.some(c => String(c).trim().toUpperCase() === 'PROJETO'));
+    if (hi < 0) { toast('Não encontrei a coluna PROJETO nessa planilha'); return; }
+    const H = grid[hi].map(c => String(c).trim().toUpperCase());
+    const col = (...names) => H.findIndex(h => names.some(n => h.startsWith(n)));
+    const ci = {p:col('PROJETO'), r:col('REGIME'), f:col('FISCAL'), s:col('STATUS') , e:col('ENTREGA'), z:col('FINALIZA'), o:col('OBSERVA')};
+    ci.s = H.findIndex(h => h === 'STATUS');
+    const toIso = v => {
+      if (v instanceof Date) return iso(new Date(v.getFullYear(), v.getMonth(), v.getDate() + (v.getHours() >= 12 ? 1 : 0)));
+      if (typeof v === 'number') { const d = new Date(Date.UTC(1899,11,30) + v*86400000); return iso(new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate())); }
+      const m = String(v).match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/); if (m) return `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
+      return '';
+    };
+    const pIdx = ci.p;
+    const imported = [];
+    let id = 1;
+    for (let i = hi + 1; i < grid.length; i++) {
+      const row = grid[i]; const p = String(row[pIdx] ?? '').trim(); if (!p) continue;
+      imported.push({
+        id: id++, mark: pIdx > 0 && String(row[pIdx-1]).includes('*'),
+        projeto: p, regime: ci.r>=0 ? normRegime(String(row[ci.r]).trim()) : '',
+        fiscal: ci.f>=0 ? titleCase(String(row[ci.f]).trim()) : '',
+        status: ci.s>=0 ? String(row[ci.s]).trim().toUpperCase() : 'A INICIAR',
+        entrega: ci.e>=0 ? toIso(row[ci.e]) : '', final: ci.z>=0 ? toIso(row[ci.z]) : '',
+        obs: ci.o>=0 ? String(row[ci.o]).trim() : ''
+      });
+    }
+    if (!imported.length) { toast('A aba não tem projetos preenchidos'); return; }
+    if (!confirm(`Substituir os dados atuais por ${imported.length} projetos de “${file.name}”?`)) return;
+    rows = imported; nextId = id; save(); clearFilters(); renderAll(); toast(`${imported.length} projetos importados`);
+  } catch(err) { console.error(err); toast('Não consegui ler esse arquivo. Envie um .xlsx com a aba Projetos.'); }
+});
+function normRegime(s){ return s === 'LR e SN' ? 'Lucro Real e Simples' : s === 'LP e SN' ? 'Lucro Presumido e Simples' : s; }
+
+/* ---------- theme ---------- */
+const SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
+const MOON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2z"/></svg>';
+function currentTheme(){
+  const t = document.documentElement.dataset.theme;
+  if (t) return t;
+  return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+function paintThemeBtn(){ document.getElementById('themeBtn').innerHTML = currentTheme() === 'dark' ? SUN : MOON; }
+try { const t = localStorage.getItem(THEME_KEY); if (t) document.documentElement.dataset.theme = t; } catch(e){}
+document.getElementById('themeBtn').addEventListener('click', () => {
+  const next = currentTheme() === 'dark' ? 'light' : 'dark';
+  document.documentElement.dataset.theme = next;
+  try { localStorage.setItem(THEME_KEY, next); } catch(e){}
+  paintThemeBtn();
+});
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', paintThemeBtn);
+
+/* ---------- toast ---------- */
+let toastTimer;
+function toast(msg){ const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2600); }
+
+/* ---------- init ---------- */
+document.getElementById('today').textContent = fmtLong.format(TODAY);
+paintThemeBtn();
+renderAll();
+</script>
+</body>
+</html>
